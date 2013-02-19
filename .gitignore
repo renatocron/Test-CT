@@ -1,16 +1,26 @@
-blib/
-.build/
-_build/
+# backup files (if any)
+*~
+*.bak
+
+# hidden files
+.*
+
+# except this file, of course!
+!.gitignore
+!.gitmodules
+
+# ctags-exuberant tags file can be manually generated so it doesn't need to be
+# in the vcs
+tags
+
+# Devel::Cover directory
 cover_db/
-inc/
-Build
-!Build/
-Build.bat
-.last_cover_stats
+
+blib*
+inc*
+*_local*
+META*
+MYMETA.*
 Makefile
-Makefile.old
-MANIFEST.bak
-META.yml
-MYMETA.yml
-nytprof.out
-pm_to_blib
+*~
+*_Inline*
