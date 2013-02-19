@@ -1,15 +1,17 @@
 package Test::CT::Assembly;
-use Moo;
-
+use Moose;
+use File::Find;
 
 has ct_dir => (
     is => 'ro',
+    isa => 'Str',
     required => 1,
 );
 
 
 has test_dir_output => (
     is => 'ro',
+    isa => 'Str',
     required => 0,
     default => sub {
         -e 't/' ? 't/' :
@@ -20,7 +22,9 @@ has test_dir_output => (
 
 sub write_tests {
     my ($self) = @_;
+    die "test_dir_output does not exists", $self->test_dir_output unless -e $self->test_dir_output;
 
+    print "Writing to file ", $self->test_dir_output, 'all-tests.t', "\n";
     open(my $fh, '>:utf8', $self->test_dir_output . 'all-tests.t');
 
     print $fh 'use Test::CT;
@@ -41,7 +45,11 @@ my $tester = Test::CT->instance;
 
     my $tests = '';
 
-    my @tests = glob($self->ct_dir. 'tests/*.t');
+    my @tests;
+    find({ wanted => sub {
+        push @tests, $_ if (-f $_ && $_ =~ /\.t$/);
+    }, no_chdir => 1 }, $self->ct_dir. 'tests/');
+
     foreach my $test_name (@tests){
 
         my $content = $self->_get_file_content($test_name);
@@ -59,6 +67,7 @@ my $tester = Test::CT->instance;
 
     print $fh "\ndone_testing;\n";
 
+    print "Done! now you can execute \$ prove -lr ", $self->test_dir_output, 'all-tests.t ', "\n";
 
     return 1;
 }
@@ -66,6 +75,8 @@ my $tester = Test::CT->instance;
 sub _get_file_content {
     my ($self, $file) = @_;
     my $content = '';
+
+    print "Reading file ", $file, "...\n";
     open (my $r, '<:utf8', $file);
     $content .= $_ while <$r>;
     close $r;
