@@ -103,6 +103,10 @@ To see this in action, execute (you need have dependencies installed as well!):
 
     then your test script will be on test_out/all-tests.t !
 
+    Please note that, if you want to run tests without Test::CT installed, you should use this instead:
+
+    $ prove -I../lib -lr test_out/all-tests.t
+
 
 dependencies are currently:
 
