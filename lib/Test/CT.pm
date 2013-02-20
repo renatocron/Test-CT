@@ -1,6 +1,6 @@
 package Test::CT;
 # ABSTRACT: *Mix* of Test::More + Test::Reuse + Test::Routine, with *template* system.
-
+use strict;
 our $VERSION = '0.01';
 $VERSION = eval $VERSION;    ## no critic (BuiltinFunctions::ProhibitStringyEval)
 use strict;
@@ -31,6 +31,7 @@ Moose::Exporter->setup_import_methods(
 );
 
 has stash => (is => 'rw', default => sub { {} });
+has track => (is => 'rw', isa => 'Bool', default => sub { 1 });
 
 has tests => (
     traits  => ['Array'],
@@ -125,77 +126,132 @@ sub _run_test {
 }
 
 sub ok {
-    my ($a, $test_name) = @_;
+    my ($maybetrue, $test_name) = @_;
+    my $self = Test::CT->instance;
 
-    _croak('Singleton Test instance not initialized!') unless defined Test::CT->instance;
-
-    Test::More::ok( $a, $test_name);
+    my $res = Test::More::ok( $maybetrue, $test_name);
+    $self->push_log({
+        func   => 'ok',
+        arguments => [$maybetrue],
+        result => $res,
+        name   => $test_name
+    });
 }
 
 sub is {
     my ($got, $expt, $test_name) = @_;
 
-    _croak('Singleton Test instance not initialized!') unless defined Test::CT->instance;
+    my $self = Test::CT->instance;
+    my $res = Test::More::is( $got, $expt, $test_name);
+    $self->push_log({
+        func   => 'is',
+        arguments => [$got, $expt, $test_name],
+        result => $res,
+        name   => $test_name
+    });
 
-
-    Test::More::is( $got, $expt, $test_name);
 }
 
 sub isnt {
     my ($got, $expt, $test_name) = @_;
 
-    _croak('Singleton Test instance not initialized!') unless defined Test::CT->instance;
-
-
-    Test::More::isnt( $a, $expt, $test_name);
+    my $self = Test::CT->instance;
+    my $res = Test::More::isnt( $got, $expt, $test_name);
+    $self->push_log({
+        func   => 'isnt',
+        arguments => [$got, $expt, $test_name],
+        result => $res,
+        name   => $test_name
+    });
 }
 
 
 sub like {
     my ($got, $expt, $test_name) = @_;
-    _croak('Singleton Test instance not initialized!') unless defined Test::CT->instance;
 
-    Test::More::like( $got, $expt, $test_name);
+    my $self = Test::CT->instance;
+    my $res = Test::More::like( $got, $expt, $test_name);
+    $self->push_log({
+        func   => 'like',
+        arguments => [$got, $expt, $test_name],
+        result => $res,
+        name   => $test_name
+    });
 }
 
 sub unlike {
     my ($got, $expt, $test_name) = @_;
-    _croak('Singleton Test instance not initialized!') unless defined Test::CT->instance;
 
-    Test::More::unlike( $got, $expt, $test_name);
+    my $self = Test::CT->instance;
+    my $res = Test::More::unlike( $got, $expt, $test_name);
+    $self->push_log({
+        func   => 'unlike',
+        arguments => [$got, $expt, $test_name],
+        result => $res,
+        name   => $test_name
+    });
 }
 
 sub is_deeply {
     my ($got, $expt, $test_name) = @_;
-    _croak('Singleton Test instance not initialized!') unless defined Test::CT->instance;
 
-    Test::More::is_deeply( $got, $expt, $test_name);
+    my $self = Test::CT->instance;
+    my $res = Test::More::is_deeply( $got, $expt, $test_name);
+    $self->push_log({
+        func   => 'is_deeply',
+        arguments => [$got, $expt, $test_name],
+        result => $res,
+        name   => $test_name
+    });
 }
 
 sub cmp_ok {
-    my ($got, $op, $expt, $test_name) = @_;
-    _croak('Singleton Test instance not initialized!') unless defined Test::CT->instance;
+    my ($got, $op, $want, $test_name) = @_;
 
-    Test::More::cmp_ok( $got, $op, $expt, $test_name );
+    my $self = Test::CT->instance;
+    my $res = Test::More::cmp_ok( $got, $op, $want, $test_name );
+    $self->push_log({
+        func   => 'cmp_ok',
+        arguments => [$got, $op, $want, $test_name],
+        result => $res,
+        name   => $test_name
+    });
 }
 
 sub diag {
     my ($a) = @_;
-    _croak('Singleton Test instance not initialized!') unless defined Test::CT->instance;
 
     Test::More::diag( $a );
+    Test::CT->instance->push_log({
+        func   => 'diag',
+        message => $a
+    });
 }
 
 sub explain {
     my ($a) = @_;
-    _croak('Singleton Test instance not initialized!') unless defined Test::CT->instance;
+
     Test::More::explain( $a );
+    Test::CT->instance->push_log({
+        func   => 'explain',
+        message => $a
+    });
 }
 
 sub note {
     my ($a) = @_;
-    _croak('Singleton Test instance not initialized!') unless defined Test::CT->instance;
     Test::More::note( $a );
+    Test::CT->instance->push_log({
+        func   => 'note',
+        message => $a
+    });
+}
+
+
+sub push_log {
+    my ($self, $param) = @_;
+
+    push @{$self->stash->{_log}}, $param;
 }
 
 
