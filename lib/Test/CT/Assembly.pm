@@ -1,4 +1,6 @@
 package Test::CT::Assembly;
+# ABSTRACT: Write tests files from *.ct.t files
+
 use Moose;
 use File::Find;
 

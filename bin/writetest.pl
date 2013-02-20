@@ -1,3 +1,5 @@
+# PODNAME: ctupdate
+
 use strict;
 use warnings;
 use FindBin qw($Bin);

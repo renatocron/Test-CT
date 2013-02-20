@@ -1,4 +1,6 @@
 package Test::CT;
+# ABSTRACT: *Mix* of Test::More + Test::Reuse + Test::Routine, with *template* system.
+
 our $VERSION = '0.01';
 $VERSION = eval $VERSION;    ## no critic (BuiltinFunctions::ProhibitStringyEval)
 use strict;
@@ -78,12 +80,6 @@ around stash => sub {
 };
 
 
-=pod
- ?name  => str
- ?like  => str        /expression/
- ?llike => str        /^expression/
- ?force_exec => bool
-=cut
 sub run {
     my ($self, %param) = @_;
 
@@ -177,10 +173,10 @@ sub is_deeply {
 }
 
 sub cmp_ok {
-    my ($got,$op, $expt, $test_name) = @_;
+    my ($got, $op, $expt, $test_name) = @_;
     _croak('Singleton Test instance not initialized!') unless defined Test::CT->instance;
 
-    Test::More::cmp_ok( $got,$op, $expt, $test_name );
+    Test::More::cmp_ok( $got, $op, $expt, $test_name );
 }
 
 sub diag {
@@ -205,3 +201,80 @@ sub note {
 
 1;
 
+
+__END__
+
+
+
+
+
+=head1 SYNOPSIS
+
+    use Test::CT;
+
+    # get test singleton object
+    my $tester = Test::CT->instance;
+
+    # add your tests.. this may repeat sometimes in your file.
+    do {
+        my $ref = sub {
+            # your testing code goes here
+            my $user = { name => 'foo' };
+            ok($user->{name}, 'looks have a name!');
+            is($user->{name}, 'foo', 'user name is foo');
+            isnt(1, 0, '1 isnt 0');
+
+            $tester->stash->{user} = $user;
+
+        };
+        # add this code reference to tests list
+        $tester->add_test(
+            Test::CT::TestFile->new(
+                coderef => $ref,
+                name => 'ct/tests/001-name-you-give.t'
+            )
+        );
+    };
+
+    # then you can add another test that use $tester->stash->{user}
+    # expecting it to be ok
+
+    # run the tests!
+    $tester->run( name => 'ct/tests/001-name-you-give.t');
+
+    # this will not ran the test again
+    $tester->run( name => 'ct/tests/001-name-you-give.t');
+
+    # but you can force it
+    $tester->run( name => 'ct/tests/001-name-you-give.t', force_exec => 1);
+
+    $tester->run( like => 'name-.+'); # all tests name =~ /name-.+/
+
+    $tester->run( llike => 'ct/tests/'); # all tests name =~ /^name-.+/
+
+    # TODO
+    $tester->run( like => qr/your regularexpr/);
+
+
+
+=head1 DESCRIPTION
+
+Test::CT call *all* methods of Test::More itself, but it create
+
+=method run(%conf)
+
+Run the coderef of a Test::CT::TestFile
+
+?name       => 'string' # find test by name
+?like       => 'string' # find test by /$like/
+?llike      => 'string' # find test by /^$like/
+?force_exec => $boolean # true for execute tests even if already executed before
+
+=head1 SPONSORED BY
+
+Aware - L<http://www.aware.com.br>
+
+=head1 CAVEATS
+
+This is alpha software. The interface is unstable, and may change without
+notice.

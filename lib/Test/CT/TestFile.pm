@@ -1,4 +1,5 @@
 package Test::CT::TestFile;
+# ABSTRACT: Test::CT::TestFile keep status of a piece of a test
 use Moose;
 
 has name => (
