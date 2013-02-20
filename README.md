@@ -77,8 +77,8 @@ Given this directory struct:
         001-then-schema-begin.ct.t
 
     ./ct/tests:
-        001-first-test.t  002-user.create.t  user
-
+        001-first-test.t
+        002-user.create.t
         ./user:
             01-roles.create.t
 
