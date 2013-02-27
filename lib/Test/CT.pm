@@ -30,7 +30,9 @@ Moose::Exporter->setup_import_methods(
     also      => 'Moose',
 );
 
-has stash => (is => 'rw', default => sub { {} });
+has current_test => (is => 'rw', isa => 'Str', default => sub { 'test name not defined!' });
+has stash  => (is => 'rw', default => sub { {} });
+has config => (is => 'rw', default => sub { {} });
 has track => (is => 'rw', isa => 'Bool', default => sub { 1 });
 
 has tests => (
@@ -110,6 +112,7 @@ sub _run_test {
     # NOTE tests don't ran more than one time, even if fail
     $item->has_run(1);
     if ($do_exec){
+        $self->current_test($name);
         eval{
             $item->coderef->();
         };
@@ -251,7 +254,31 @@ sub note {
 sub push_log {
     my ($self, $param) = @_;
 
+    $param->{name} = $self->current_test;
     push @{$self->stash->{_log}}, $param;
+}
+
+sub down_log_level {
+    ...
+}
+
+sub up_log_level {
+    ...
+}
+
+sub finalize {
+    my ($self, $param) = @_;
+
+    if ($self->track){
+        my $class = 'Test::CT::LogWriter::' . $self->config->{log_writter}{format};
+        eval("use $class;");
+
+        my $writter = $class->new( tester => $self );
+
+        $writter->generate;
+
+    }
+
 }
 
 

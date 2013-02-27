@@ -3,6 +3,8 @@ package Test::CT::Assembly;
 
 use Moose;
 use File::Find;
+use YAML::Tiny;
+use Data::Dumper;
 
 has ct_dir => (
     is => 'ro',
@@ -29,11 +31,21 @@ sub write_tests {
     print "Writing to file ", $self->test_dir_output, 'all-tests.t', "\n";
     open(my $fh, '>:utf8', $self->test_dir_output . 'all-tests.t');
 
+    die( $self->ct_dir . '/config.yaml not found!' ) unless -e $self->ct_dir . '/config.yaml';
+
+    my $yaml = YAML::Tiny->read( $self->ct_dir . '/config.yaml' )->[0];
+
+    die "YAML invalid" unless $yaml && ref $yaml eq 'HASH';
+
+    my $conf = Dumper ;
+
     print $fh 'use Test::CT;
 use FindBin qw($Bin);
 use lib "$Bin/../lib";
 
 my $tester = Test::CT->instance;
+my '.Data::Dumper->Sortkeys(1)->Dump([$yaml], [qw(test_ct_config)]).'
+$tester->config($test_ct_config);
 ';
 
     my @boot = glob($self->ct_dir. 'boot/*.ct.t');
@@ -67,7 +79,7 @@ my $tester = Test::CT->instance;
 
     }
 
-    print $fh "\ndone_testing;\n";
+    print $fh "\n\$tester->finalize;\ndone_testing;\n";
 
     print "Done! now you can execute \$ prove -lr ", $self->test_dir_output, 'all-tests.t ', "\n";
 

@@ -1,0 +1,4 @@
+---
+log_writter:
+  format: Markdown
+  path: etc/test_out/doc/
