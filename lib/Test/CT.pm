@@ -272,6 +272,7 @@ sub finalize {
     if ($self->track){
         my $class = 'Test::CT::LogWriter::' . $self->config->{log_writter}{format};
         eval("use $class;");
+        die $@ if $@;
 
         my $writter = $class->new( tester => $self );
 

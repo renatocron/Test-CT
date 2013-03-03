@@ -17,7 +17,7 @@ GetOptions(
 
 $ct_dir ||= ( -e 'ct/' ? 'ct/' : ( -e '../ct/' ? '../ct/' : (-e $ARGV[0] ? $ARGV[0] : die("cant found ct_dir")) ));
 
-mkdir $ct_dir, 0666 or die "Cant create $ct_dir $@" unless -d $ct_dir;
+mkdir $ct_dir or die "Cant create $ct_dir $@" unless -d $ct_dir;
 
 mkdir $ct_dir . '/boot';
 mkdir $ct_dir . '/tests';
