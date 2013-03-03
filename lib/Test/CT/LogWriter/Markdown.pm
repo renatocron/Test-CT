@@ -42,7 +42,10 @@ sub generate {
 
         print $fh "# $test\n\n";
 
-        print $fh $_->{md} . "\n" foreach (@{$tests});
+        foreach (@{$tests}){
+            next unless exists $_->{md};
+            print $fh $_->{md} . "\n" ;
+        }
     }
     #use DDP; p $path;
 
@@ -108,6 +111,7 @@ sub _process_item {
         $item->{md} = "$code\n";
 
     }else{
+
         # unsupported
         return undef;
     }
