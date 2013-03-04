@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 # PODNAME: ctupdate
 
 use strict;
