@@ -19,9 +19,9 @@ has _dumper => (
 );
 
 sub generate {
-    my ($self) = @_;
+    my ($self, $conf) = @_;
 
-    my $path = $self->tester->config->{log_writer}{path} . '/';
+    my $path = $conf->{path} . '/';
     mkdir $path or die "cant create $path $!" unless -d $path;
 
     print "log not found in stash!\n" and return

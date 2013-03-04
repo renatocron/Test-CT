@@ -269,14 +269,21 @@ sub up_log_level {
 sub finalize {
     my ($self, $param) = @_;
 
-    if ($self->track){
-        my $class = 'Test::CT::LogWriter::' . $self->config->{log_writer}{format};
-        eval("use $class;");
-        die $@ if $@;
+    if ($self->track && ref $self->config->{log_writer} eq 'ARRAY'){
 
-        my $writer = $class->new( tester => $self );
+        foreach my $writer_conf (@{$self->config->{log_writer}}){
 
-        $writer->generate;
+            $writer_conf->{path} = $self->config->{log_writers}{default_path}
+                unless exists $writer_conf->{path};
+
+            my $class = 'Test::CT::LogWriter::' . $writer_conf->{format};
+            eval("use $class;");
+            die $@ if $@;
+
+            my $writer = $class->new( tester => $self );
+
+            $writer->generate($writer_conf);
+        }
 
     }
 
