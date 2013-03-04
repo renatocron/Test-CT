@@ -8,6 +8,7 @@ my $curdir = File::Spec->curdir();
 my $ct_dir;
 my $t_dir;
 my $prove;
+my $prove_args = '-lv';
 my $check;
 BEGIN {
     use Getopt::Long;
@@ -23,6 +24,7 @@ BEGIN {
         "out=s"           => \$t_dir,
 
         "p|prove"         => \$prove,
+        "prove_args=s"    => \$prove_args,
         "c|check-syntax"  => \$check,
 
     ) or pod2usage(2);
@@ -50,6 +52,30 @@ my $compiler = Test::CT::Assembly->new(
 
 my $tests = $compiler->write_tests;
 
-if ($prove){
+if ($prove && exists $tests->{tests}){
+
+    print "\nauto-execute prove on!\n";
+
+    require IO::Select;
+
+    print "executing prove $prove_args for @{$tests->{tests}}...\n  ";
+
+    my $s = IO::Select->new();
+
+    open my $fh, '-|', "prove $prove_args '".(join("' '", @{$tests->{tests}}))."'";
+    $s->add($fh);
+
+    while (my @readers = $s->can_read()) {
+        for my $fh (@readers) {
+            if (eof $fh) {
+                $s->remove($fh);
+                next;
+            }
+            my $l = <$fh>;
+            print "  $l";
+        }
+    }
+
+
 
 }
