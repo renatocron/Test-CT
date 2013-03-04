@@ -77,3 +77,66 @@ if ($prove && exists $tests->{tests}){
     }
 
 }
+
+__END__
+
+=head1 NAME
+
+ct-build - Compile a CT Directory into tests files.
+
+=head1 SYNOPSIS
+
+ct-init [options]
+
+    Options:
+
+        -help             this help message
+        -man              full documentation
+
+        -dir              directory to read CT files (defaults to: $PWD/ct/)
+        -out              directory to write tests files (defaults to: $PWD/t/)
+
+        -p
+        -prove            run prove command after compiling tests.
+
+        -prove_args       arguments to pass to prove. defaults to '-lv'
+
+        -c
+        -check-syntax     check syntax on scripts written
+                            note: you may NEVER do "use strict" by yourself
+                                  this will make this verification fail every time!
+
+        -no-c
+        -no-check-syntax  disable syntax checking
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<-help>
+
+Print a brief help message and exits.
+
+=item B<-man>
+
+Prints the manual page and exits.
+
+=item B<-dir>
+
+Directory to read files from CT
+defaults to: $PWD/ct/
+
+=item B<-out>
+
+Directory to write tests files generated from CT Directory
+defaults to: $PWD/t/
+
+=back
+
+=head1 DESCRIPTION
+
+B<ct-init> will create a new Test::CT directory from interative input.
+
+
+
+=cut
