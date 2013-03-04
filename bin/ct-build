@@ -25,7 +25,7 @@ BEGIN {
 
         "p|prove"         => \$prove,
         "prove_args=s"    => \$prove_args,
-        "c|check-syntax"  => \$check,
+        "c|check-syntax!"  => \$check,
 
     ) or pod2usage(2);
     pod2usage(1) if $help;
@@ -42,7 +42,7 @@ BEGIN {
 }
 
 use Test::CT::Assembly;
-
+$check //= 1;
 
 my $compiler = Test::CT::Assembly->new(
     ct_dir          => $ct_dir,
@@ -75,7 +75,5 @@ if ($prove && exists $tests->{tests}){
             print "  $l";
         }
     }
-
-
 
 }

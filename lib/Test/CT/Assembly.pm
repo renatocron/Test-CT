@@ -20,6 +20,12 @@ has test_dir_output => (
     required => 1
 );
 
+has check_syntax => (
+    is => 'rw',
+    isa => 'Bool',
+    required => 0,
+    default => sub {0}
+);
 
 sub write_tests {
     my ($self) = @_;
@@ -38,8 +44,6 @@ sub write_tests {
 
     die "YAML comfig invalid!\n" unless $yaml && ref $yaml eq 'HASH';
 
-    # Perl::Syntax
-
     print $fh 'use Test::CT;
 use FindBin qw($Bin);
 use lib "$Bin/../lib";
@@ -49,11 +53,17 @@ my '.Data::Dumper->Sortkeys(1)->Dump([$yaml], [qw(test_ct_config)]).'
 $tester->config($test_ct_config);
 ';
 
-    my @boot = glob($self->ct_dir. 'boot/*.ct.t');
+    print "Syntax checking is " . ($self->check_syntax ? 'on':'off') . "\n";
+
+    my @boot;
+    find({ wanted => sub {
+        push @boot, $_ if (-f $_ && $_ =~ /\.ct\.t$/);
+    }, no_chdir => 1 }, catdir($self->ct_dir, 'boot') );
+
     foreach my $boot_name (sort { $a cmp $b} @boot ){
         open my $r, '<:utf8', $boot_name;
         print $fh "# $boot_name\n";
-        print $fh $self->_get_file_content($boot_name);
+        print $fh $self->_get_file_content($boot_name, may_check => 1);
     }
 
     my $wrapper_str = $self->_get_wrapper_str($self);
@@ -67,7 +77,7 @@ $tester->config($test_ct_config);
 
     foreach my $test_name (@tests){
 
-        my $content = $self->_get_file_content($test_name);
+        my $content = $self->_get_file_content($test_name, may_checkz => 1);
         my $copy = $wrapper_str;
 
         print $fh "# $test_name \n";
@@ -90,7 +100,16 @@ $tester->config($test_ct_config);
 }
 
 sub _get_file_content {
-    my ($self, $file) = @_;
+    my ($self, $file, %options) = @_;
+
+    if ($self->check_syntax && exists $options{may_check} ){
+        my $mayok = `$^X -c '$file' 2>&1`;
+        if ($mayok !~ /syntax OK\s+$/){
+            $mayok =~ s/^/  /mg;
+            die ("\n* Syntax error in $file:\n\n$mayok\n");
+        }
+    }
+
     my $content = '';
 
     print "Reading file ", $file, "...\n";
@@ -104,11 +123,15 @@ sub _get_file_content {
 sub _get_wrapper_str {
     my ($self) = @_;
 
-    my @wrappers = glob($self->ct_dir. 'wrappers/*.ct.t');
+    my @wrappers;
+    find({ wanted => sub {
+        push @wrappers, $_ if (-f $_ && $_ =~ /\.ct\.t$/);
+    }, no_chdir => 1 }, catdir($self->ct_dir, 'wrappers') );
+
     my @wrappers_list;
     my $wrapper_num = 0;
     foreach my $wrapper_name (sort { $a cmp $b} @wrappers ){
-        my $wrapper = $self->_get_file_content($wrapper_name);
+        my $wrapper = $self->_get_file_content($wrapper_name, may_check => 1);
 
         $wrapper =~ s/#\s+content\s+#/\0wrapper\0/i;
         $wrapper_num++;
