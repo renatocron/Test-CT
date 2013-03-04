@@ -42,10 +42,6 @@ exit(1) unless -d $ct_dir && -w $ct_dir;
 
 die ("Config already exists!\n") if -e File::Spec->catfile($ct_dir, 'config.yaml');
 
-mkdir File::Spec->catdir($ct_dir, 'boot');
-mkdir File::Spec->catdir($ct_dir, 'tests');
-mkdir File::Spec->catdir($ct_dir, 'wrappers');
-
 my $conf = {};
 my $def = 'Markdown';
 while (1){
@@ -75,7 +71,11 @@ my $yaml = YAML::Tiny->new;
 $yaml->[0] = $conf;
 $yaml->write( File::Spec->catfile($ct_dir, 'config.yaml') );
 
-print "Config write in ".File::Spec->catfile($ct_dir, 'config.yaml')."\n";
+print "Configuration written on ".File::Spec->catfile($ct_dir, 'config.yaml')."\n";
+
+mkdir File::Spec->catdir($ct_dir, 'boot');
+mkdir File::Spec->catdir($ct_dir, 'tests');
+mkdir File::Spec->catdir($ct_dir, 'wrappers');
 
 __END__
 
@@ -116,7 +116,13 @@ defaults to: $PWD/ct/
 
 =head1 DESCRIPTION
 
-B<This program> will read the given input file(s) and do something
-useful with the contents thereof.
+B<ct-init> will create a new Test::CT directory from interative input.
+
+A directory will be created with:
+
+    boot/
+    wrappers/
+    tests/
+    config.yaml
 
 =cut
