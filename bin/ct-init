@@ -1,57 +1,122 @@
 #!/usr/bin/perl
 # PODNAME: ctupdate
-
 use strict;
 use warnings;
 use File::Spec;
-use Getopt::Long;
-use YAML::Tiny;
 
 my $ct_dir;
+BEGIN {
+    use Getopt::Long;
+    use Pod::Usage;
+    my $man = 0;
+    my $help = 0;
 
-GetOptions(
-    "in=s"   => \$ct_dir
-) or exit;
+    GetOptions(
+        'help|?' => \$help,
+        man      => \$man,
 
+        "dir=s"   => \$ct_dir
+    ) or pod2usage(2);
+    pod2usage(1) if $help;
+    pod2usage(-exitstatus => 0, -verbose => 2) if $man;
+}
 
-$ct_dir ||= ( -e 'ct/' ? 'ct/' : ( -e '../ct/' ? '../ct/' : (-e $ARGV[0] ? $ARGV[0] : die("cant found ct_dir")) ));
-$ct_dir ||= '';
+use YAML::Tiny;
 
-mkdir $ct_dir or die "Cant create $ct_dir $@" unless -d $ct_dir;
+my $curdir = File::Spec->curdir();
 
-mkdir $ct_dir . '/boot';
-mkdir $ct_dir . '/tests';
-mkdir $ct_dir . '/wrappers';
-
-die ("config already exists!\n") if -e $ct_dir.'/config.yaml';
-
-my $conf = {};
-
-while (!exists $conf->{log_writter}{format}){
-    print "Set your LogWritter format [Markdown] ";
-    my $maybe = <>;
-    chop($maybe);
-    $maybe ||='Markdown';
-    if ($maybe =~ /^Markdown$/){
-        $conf->{log_writter}{format} = $maybe;
+if (!$ct_dir){
+    $ct_dir = File::Spec->catdir( $curdir, 'ct' );
+    mkdir $ct_dir or die "Cant create $ct_dir $@\n" unless -d $ct_dir;
+    print "CT Directory setup to $ct_dir\n";
+}else{
+    if (!-d $ct_dir){
+        mkdir $ct_dir or die "Cant create $ct_dir $@\n" unless -d $ct_dir;
+        print "CT Directory setup to $ct_dir and it looks fine!\n";
     }else{
-        print "invalid option $maybe\n";
+        print "CT Directory $ct_dir does not exist or is not writable\n";
     }
 }
 
+exit(1) unless -d $ct_dir && -w $ct_dir;
+
+die ("Config already exists!\n") if -e File::Spec->catfile($ct_dir, 'config.yaml');
+
+mkdir File::Spec->catdir($ct_dir, 'boot');
+mkdir File::Spec->catdir($ct_dir, 'tests');
+mkdir File::Spec->catdir($ct_dir, 'wrappers');
+
+my $conf = {};
+my $def = 'Markdown';
+while (1){
+    print "Set your LogWriter format" . ( $def ? " [$def]: " : ": press enter to finish or type other LogWriter class: ");
+    my $maybe = <>;
+    chop($maybe);
+    $maybe ||= $def;
+    $def = '';
+
+    last unless $maybe;
+
+    push @{$conf->{log_writer}}, { format => $maybe };
+}
 
 
-print "Set your LogWritter path [testsdoc/] ";
+my $def_log = File::Spec->rel2abs( File::Spec->catdir($ct_dir, '..', 'testsdoc') );
+$def_log = File::Spec->abs2rel( $def_log, $ct_dir );
+
+print "Set your LogWriters default output path [$def_log relative to $ct_dir]: ";
 my $maybe = <>;
 chop($maybe);
-$maybe ||='testsdoc/';
-$conf->{log_writter}{path} = $maybe;
-
+$maybe ||= $def_log;
+$conf->{log_writers}{default_path} = $maybe;
 
 my $yaml = YAML::Tiny->new;
 
 $yaml->[0] = $conf;
-$yaml->write( $ct_dir.'/config.yaml' );
+$yaml->write( File::Spec->catfile($ct_dir, 'config.yaml') );
 
-print "Config write in $ct_dir/config.yaml\n";
+print "Config write in ".File::Spec->catfile($ct_dir, 'config.yaml')."\n";
 
+__END__
+
+=head1 NAME
+
+ct-init - Init a new Test::CT directory with config.
+
+=head1 SYNOPSIS
+
+ct-init [options]
+
+    Options:
+
+        -help            this help message
+        -man             full documentation
+
+        -dir             directory to write CT files (defaults to: $PWD/ct/)
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<-help>
+
+Print a brief help message and exits.
+
+=item B<-man>
+
+Prints the manual page and exits.
+
+=item B<-dir>
+
+Directory to write the generated files and directories for CT.
+defaults to: $PWD/ct/
+
+
+=back
+
+=head1 DESCRIPTION
+
+B<This program> will read the given input file(s) and do something
+useful with the contents thereof.
+
+=cut

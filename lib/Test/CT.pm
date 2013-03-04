@@ -270,13 +270,13 @@ sub finalize {
     my ($self, $param) = @_;
 
     if ($self->track){
-        my $class = 'Test::CT::LogWriter::' . $self->config->{log_writter}{format};
+        my $class = 'Test::CT::LogWriter::' . $self->config->{log_writer}{format};
         eval("use $class;");
         die $@ if $@;
 
-        my $writter = $class->new( tester => $self );
+        my $writer = $class->new( tester => $self );
 
-        $writter->generate;
+        $writer->generate;
 
     }
 
