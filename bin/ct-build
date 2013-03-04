@@ -3,8 +3,7 @@
 
 use strict;
 use warnings;
-use FindBin qw($Bin);
-use lib "$Bin/../lib";
+use File::Spec;
 
 use Test::CT::Assembly;
 use Getopt::Long;

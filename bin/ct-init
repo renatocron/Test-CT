@@ -3,9 +3,7 @@
 
 use strict;
 use warnings;
-use FindBin qw($Bin);
-use lib "$Bin/../lib";
-
+use File::Spec;
 use Getopt::Long;
 use YAML::Tiny;
 
@@ -17,6 +15,7 @@ GetOptions(
 
 
 $ct_dir ||= ( -e 'ct/' ? 'ct/' : ( -e '../ct/' ? '../ct/' : (-e $ARGV[0] ? $ARGV[0] : die("cant found ct_dir")) ));
+$ct_dir ||= '';
 
 mkdir $ct_dir or die "Cant create $ct_dir $@" unless -d $ct_dir;
 
