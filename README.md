@@ -79,31 +79,54 @@ Given this directory struct:
         ./user:
             01-roles.create.t
 
+    ./ct/config.yaml
+
 
 To see this in action, please execute (you need have dependencies installed as well!):
 
     $ git clone git://github.com/renatoaware/Test-CT.git
     $ cd Test-CT
-    $ cd etc
-    $ mkdir test_out
-    $ perl  -I../lib/ ../bin/ct-build -in ct/ -out test_out/
+    $ mkdir etc/test_out
+    $ perl -Ilib/ bin/ct-build -dir etc/ct/ -out etc/test_out/
 
     output:
 
-        Writing to file test_out/all-tests.t
-        Reading file ct/boot/01-load-heavy-things.ct.t...
-        Reading file ct/boot/02-do-another-thing-after-01.ct.t...
-        Reading file ct/wrappers/001-schema-begin.ct.t...
-        Reading file ct/tests/001-first-test.t...
-        Reading file ct/tests/002-user.create.t...
-        Reading file ct/tests/user/01-roles.create.t...
-        Done! now you can execute $ prove -lr test_out/all-tests.t
+        Writing to file etc/test_out/all-tests.t
+        Syntax checking is on
+        Reading file etc/ct/boot/01-load-heavy-things.ct.t...
+        Reading file etc/ct/boot/02-do-another-thing-after-01.ct.t...
+        Reading file etc/ct/wrappers/001-schema-begin.ct.t...
+        Reading file etc/ct/tests/002-user.create.t...
+        Reading file etc/ct/tests/001-first-test.t...
+        Reading file etc/ct/tests/user/01-roles.create.t...
+        Done! now you can execute $ prove -lr etc/test_out/all-tests.t
 
     then your test script will be on test_out/all-tests.t !
 
-    Please note that, if you want to run tests without Test::CT installed, you should use this instead:
+    you can also execute:
 
-    $ prove -I../lib -lr test_out/all-tests.t
+    $ perl -Ilib/ bin/ct-build -dir etc/ct/ -out etc/test_out/ -prove
+
+    output:
+        ...
+        auto-execute prove on!
+        executing prove -lv for etc/test_out/all-tests.t...
+        # creating user id..
+        etc/test_out/all-tests.t ..
+        ok 1 - user id is really 1
+        ok 2 - 1 looks ok
+        ok 3 - 1 is 1
+        ok 4 - 1 isnt 0
+        ok 5 - start and finish with a
+        ok 6 - dont start and finish with a
+        ok 7 - 1 == 1.0
+        ok 8 - is_deeply ok
+        ok 9 - 1 is ok!
+        1..9
+        ok
+        All tests successful.
+        Files=1, Tests=9,  0 wallclock secs ( 0.01 usr  0.01 sys +  0.23 cusr  0.00 csys =  0.25 CPU)
+        Result: PASS
 
 
 Here are the currently are dependencies, but dzil may keep cpan builds up to date:
