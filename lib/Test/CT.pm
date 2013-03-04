@@ -350,7 +350,12 @@ __END__
 
 =head1 DESCRIPTION
 
-Test::CT call *all* methods of Test::More itself, but it create
+Test-CT is a different way to you write your tests files.
+
+Using commands of Test::More, writing separated tests files like Test::Aggregate::Nested
+and using a stash to keep tracking of all tests for you write a simple (or not)
+documentation for your project.
+
 
 =method run(%conf)
 
@@ -361,11 +366,28 @@ Run the coderef of a Test::CT::TestFile
 ?llike      => 'string' # find test by /^$like/
 ?force_exec => $boolean # true for execute tests even if already executed before
 
+
+=method stash
+
+It's like Catalyst stash. A simple hashref, so you can:
+
+    $tester->stash( foo => 1, bar => 2)
+    $tester->stash({ abc => 2});
+    $tester->stash->{foo}++;
+
+=method finalize
+
+Instantiate all Test::CT::LogWriter::XXX from @{$self->config->{log_writer}} to generate documentation.
+
+Should be called after all tests run.
+
+=head1 CAVEATS
+
+This is alpha software. But the interface will be stable, and changes will
+make effort to keep back compatibility, even though major revisions.
+
 =head1 SPONSORED BY
 
 Aware - L<http://www.aware.com.br>
 
-=head1 CAVEATS
-
-This is alpha software. The interface is unstable, and may change without
-notice.
+=cut

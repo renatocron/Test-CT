@@ -1,15 +1,13 @@
 Test-CT
 =======
 
-This archive contains the distribution Test-CT,
-version 0.1:
+This git contains the code of Test-CT `version 0.1`.
 
+Test-CT is a different way to you write your tests files.
 
-  *Mix* of Test::More + Test::Reuse + Test::Routine, with *template* system.
-
-  or
-
-  Simple test framework to write tests based on your rules. To you DRY your tests;
+Using commands of Test::More, writing separated tests files like Test::Aggregate::Nested
+and using a stash to keep tracking of all tests for you write a simple (or not)
+documentation for your project.
 
 
 SYNOPSIS
@@ -132,6 +130,7 @@ All tests scripts outputs begin `use Test::CT` that do a `use Moose`, so it alre
 ## TODO
 
 * support to more log outputs (like interative HTML)
+* more than one test output. (eg: group of tests)
 * exemple of custom LogWriter for CRUD Catalyst REST API
 * __DATA__ and __END__
 * Test::CT::LogWriter::Swagger ?
