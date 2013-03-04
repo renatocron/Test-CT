@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# PODNAME: ctupdate
+# PODNAME: ct-init
 use strict;
 use warnings;
 use File::Spec;

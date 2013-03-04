@@ -1,27 +1,55 @@
 #!/usr/bin/perl
-# PODNAME: ctupdate
-
+# PODNAME: ct-build
 use strict;
 use warnings;
 use File::Spec;
 
-use Test::CT::Assembly;
-use Getopt::Long;
-
+my $curdir = File::Spec->curdir();
 my $ct_dir;
 my $t_dir;
+my $prove;
+my $check;
+BEGIN {
+    use Getopt::Long;
+    use Pod::Usage;
+    my $man = 0;
+    my $help = 0;
 
-GetOptions(
-    "in=s"   => \$ct_dir,
-    "out=s"  => \$t_dir,
-) or exit;
+    GetOptions(
+        'help|?' => \$help,
+        man      => \$man,
+
+        "dir=s"           => \$ct_dir,
+        "out=s"           => \$t_dir,
+
+        "p|prove"         => \$prove,
+        "c|check-syntax"  => \$check,
+
+    ) or pod2usage(2);
+    pod2usage(1) if $help;
+    pod2usage(-exitstatus => 0, -verbose => 2) if $man;
+
+    $ct_dir = File::Spec->catdir( $curdir, 'ct' ) if (!$ct_dir);
+
+    die "Can't find CT directory ($ct_dir)\n" unless -d $ct_dir;
 
 
-$ct_dir ||= ( -e 'ct/' ? 'ct/' : ( -e '../ct/' ? '../ct/' : (-e $ARGV[0] ? $ARGV[0] : die("cant found ct_dir")) ));
+    $t_dir = File::Spec->catdir( $curdir, 't' ) if (!$t_dir);
+
+    die "Can't find tests output directory ($t_dir)\n" unless -d $t_dir;
+}
+
+use Test::CT::Assembly;
+
 
 my $compiler = Test::CT::Assembly->new(
     ct_dir          => $ct_dir,
-    (defined $t_dir ? (test_dir_output => $t_dir) : ())
+    (defined $t_dir ? (test_dir_output => $t_dir) : ()),
+    check_syntax => $check
 );
 
-$compiler->write_tests;
+my $tests = $compiler->write_tests;
+
+if ($prove){
+
+}

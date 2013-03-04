@@ -5,39 +5,40 @@ use Moose;
 use File::Find;
 use YAML::Tiny;
 use Data::Dumper;
+use File::Spec::Functions qw/catdir catfile rel2abs abs2rel/;
 
 has ct_dir => (
-    is => 'ro',
+    is => 'rw',
     isa => 'Str',
     required => 1,
 );
 
 
 has test_dir_output => (
-    is => 'ro',
+    is => 'rw',
     isa => 'Str',
-    required => 0,
-    default => sub {
-        -e 't/' ? 't/' :
-            -e '../t/' ? '../t/' : die ("set test_dir_output");
-    }
+    required => 1
 );
 
 
 sub write_tests {
     my ($self) = @_;
-    die "test_dir_output does not exists", $self->test_dir_output unless -e $self->test_dir_output;
 
-    print "Writing to file ", $self->test_dir_output, 'all-tests.t', "\n";
-    open(my $fh, '>:utf8', $self->test_dir_output . 'all-tests.t');
+    $self->ct_dir(abs2rel($self->ct_dir));
+    $self->test_dir_output(abs2rel( $self->test_dir_output ));
 
-    die( $self->ct_dir . '/config.yaml not found!' ) unless -e $self->ct_dir . '/config.yaml';
+    die "test_dir_output does not exists ", $self->test_dir_output unless -e $self->test_dir_output;
 
-    my $yaml = YAML::Tiny->read( $self->ct_dir . '/config.yaml' )->[0];
+    print "Writing to file ", catfile($self->test_dir_output, 'all-tests.t'), "\n";
+    open(my $fh, '>:utf8', catfile($self->test_dir_output, 'all-tests.t'));
 
-    die "YAML invalid" unless $yaml && ref $yaml eq 'HASH';
+    die( catfile($self->ct_dir, 'config.yaml') . " not found!\n" ) unless -e catfile($self->ct_dir, 'config.yaml');
 
-    my $conf = Dumper ;
+    my $yaml = YAML::Tiny->read( catfile($self->ct_dir, 'config.yaml') )->[0];
+
+    die "YAML comfig invalid!\n" unless $yaml && ref $yaml eq 'HASH';
+
+    # Perl::Syntax
 
     print $fh 'use Test::CT;
 use FindBin qw($Bin);
@@ -62,7 +63,7 @@ $tester->config($test_ct_config);
     my @tests;
     find({ wanted => sub {
         push @tests, $_ if (-f $_ && $_ =~ /\.t$/);
-    }, no_chdir => 1 }, $self->ct_dir. 'tests/');
+    }, no_chdir => 1 }, catdir($self->ct_dir, 'tests') );
 
     foreach my $test_name (@tests){
 
@@ -81,9 +82,11 @@ $tester->config($test_ct_config);
 
     print $fh "\n\$tester->finalize;\ndone_testing;\n";
 
-    print "Done! now you can execute \$ prove -lr ", $self->test_dir_output, 'all-tests.t ', "\n";
+    print "Done! now you can execute \$ prove -lr ", catfile($self->test_dir_output, 'all-tests.t'), " \n";
 
-    return 1;
+    return {
+        tests => [ catfile( $self->test_dir_output, 'all-tests.t') ]
+    };
 }
 
 sub _get_file_content {
