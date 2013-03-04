@@ -84,6 +84,10 @@ __END__
 
 ct-build - Compile a CT Directory into tests files.
 
+=head1 ABSTRACT
+
+Compile a CT Directory into tests files.
+
 =head1 SYNOPSIS
 
 ct-init [options]

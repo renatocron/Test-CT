@@ -94,6 +94,10 @@ ct-init [options]
 
         -dir             directory to write CT files (defaults to: $PWD/ct/)
 
+=head1 ABSTRACT
+
+Init a new Test::CT directory with config.
+
 =head1 OPTIONS
 
 =over 8

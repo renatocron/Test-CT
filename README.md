@@ -25,7 +25,6 @@ How it works:
     my $tester = Test::CT->instance;
 
 
-
     my $ref = sub {
         # your testing code goes here
 
@@ -83,15 +82,16 @@ Given this directory struct:
             01-roles.create.t
 
 
-To see this in action, execute (you need have dependencies installed as well!):
+To see this in action, please execute (you need have dependencies installed as well!):
 
     $ git clone git://github.com/renatoaware/Test-CT.git
     $ cd Test-CT
     $ cd etc
     $ mkdir test_out
-    $ perl  -I../lib/ ../bin/writetest.pl -in ct/ -out test_out/
+    $ perl  -I../lib/ ../bin/ct-build -in ct/ -out test_out/
 
     output:
+
         Writing to file test_out/all-tests.t
         Reading file ct/boot/01-load-heavy-things.ct.t...
         Reading file ct/boot/02-do-another-thing-after-01.ct.t...
@@ -108,10 +108,50 @@ To see this in action, execute (you need have dependencies installed as well!):
     $ prove -I../lib -lr test_out/all-tests.t
 
 
-dependencies are currently:
+Here are the currently are dependencies, but dzil may keep cpan builds up to date:
 
-    Test::More
-    Moose
+* Moose
+* MooseX::Singleton
+* Moose::Exporter
+* Test::More
+
+Please see ct-build / ct-init man page to more info about it.
+
+    $ man ct-init
+
+    $ man ct-build
+
+
+## CAVERATS
+
+Currently, you can not use __END__ or __DATA__ on your tests scripts. Nor do "use strict" by yourself.
+
+All tests scripts outputs begin `use Test::CT` that do a `use Moose`, so it already are strict / warnings;
+
+
+## TODO
+
+* support to more log outputs (like interative HTML)
+* exemple of custom LogWriter for CRUD Catalyst REST API
+* __DATA__ and __END__
+* Test::CT::LogWriter::Swagger ?
+
+## AUTHOR
+
+Renato Cron / [RENTOCRON @ metacpan](https://metacpan.org/author/RENTOCRON)
+
+## SUPPORT
+
+IRC:
+
+    Join #sao-paulo.pm on irc.perl.org [this is a portuguese channel, but you can speak in english with us!]
+
+## SPONSORED BY
+
+Aware - [http://www.aware.com.br](http://www.aware.com.br)
+
+
+## LICENSE
 
 This software is copyright (c) 2013 by Renato Cron.
 
