@@ -348,6 +348,9 @@ __END__
 
 
 
+Please see more in README in https://github.com/renatoaware/Test-CT
+
+
 =head1 DESCRIPTION
 
 Test-CT is a different way to you write your tests files.
