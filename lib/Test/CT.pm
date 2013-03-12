@@ -1,7 +1,7 @@
 package Test::CT;
 # ABSTRACT: *Mix* of Test::More + Test::Reuse + Test::Routine, with *template* system.
 use strict;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 $VERSION = eval $VERSION;    ## no critic (BuiltinFunctions::ProhibitStringyEval)
 use strict;
 use MooseX::Singleton;

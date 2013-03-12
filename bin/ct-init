@@ -57,10 +57,9 @@ while (1){
 }
 
 
-my $def_log = File::Spec->rel2abs( File::Spec->catdir($ct_dir, '..', 'testsdoc') );
-$def_log = File::Spec->abs2rel( $def_log, $ct_dir );
+my $def_log = 'testsdoc';
 
-print "Set your LogWriters default output path [$def_log relative to $ct_dir]: ";
+print "Set your LogWriters default output path [$def_log]: ";
 my $maybe = <>;
 chop($maybe);
 $maybe ||= $def_log;

@@ -4,13 +4,16 @@ use strict;
 use warnings;
 use File::Spec;
 
-my $curdir = File::Spec->curdir();
 my $ct_dir;
 my $t_dir;
 my $prove;
 my $prove_args = '-lv';
 my $check;
+my $curdir;
+
 BEGIN {
+    $curdir = File::Spec->curdir();
+
     use Getopt::Long;
     use Pod::Usage;
     my $man = 0;
@@ -31,6 +34,7 @@ BEGIN {
     pod2usage(1) if $help;
     pod2usage(-exitstatus => 0, -verbose => 2) if $man;
 
+    print "current dir: $curdir\n";
     $ct_dir = File::Spec->catdir( $curdir, 'ct' ) if (!$ct_dir);
 
     die "Can't find CT directory ($ct_dir)\n" unless -d $ct_dir;
