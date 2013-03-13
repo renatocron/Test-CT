@@ -2,12 +2,13 @@
 # PODNAME: ct-build
 use strict;
 use warnings;
+
 use File::Spec;
 
 my $ct_dir;
 my $t_dir;
 my $prove;
-my $prove_args = '-lv';
+my $prove_args;
 my $check;
 my $curdir;
 
@@ -34,6 +35,8 @@ BEGIN {
     pod2usage(1) if $help;
     pod2usage(-exitstatus => 0, -verbose => 2) if $man;
 
+    $prove_args||= '-lv';
+
     print "current dir: $curdir\n";
     $ct_dir = File::Spec->catdir( $curdir, 'ct' ) if (!$ct_dir);
 
@@ -46,6 +49,7 @@ BEGIN {
 }
 
 use Test::CT::Assembly;
+use App::Prove;
 $check //= 1;
 
 my $compiler = Test::CT::Assembly->new(
@@ -60,25 +64,13 @@ if ($prove && exists $tests->{tests}){
 
     print "\nauto-execute prove on!\n";
 
-    require IO::Select;
 
-    print "executing prove $prove_args for @{$tests->{tests}}...\n  ";
+    print "executing prove $prove_args for @{$tests->{tests}}...\n\n";
 
-    my $s = IO::Select->new();
+    my $app = App::Prove->new;
+    $app->process_args(@{$tests->{tests}}, split ' ', $prove_args);
 
-    open my $fh, '-|', "prove $prove_args '".(join("' '", @{$tests->{tests}}))."'";
-    $s->add($fh);
-
-    while (my @readers = $s->can_read()) {
-        for my $fh (@readers) {
-            if (eof $fh) {
-                $s->remove($fh);
-                next;
-            }
-            my $l = <$fh>;
-            print "  $l";
-        }
-    }
+    print $app->run ? "\ndone!\n" : "prove failed!\n";
 
 }
 
