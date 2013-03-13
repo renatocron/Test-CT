@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 # PODNAME: ct-init
+# VERSION 0.02
+# ABSTRACT: setup script create a new ct/config.yaml file
+
 use strict;
 use warnings;
 use File::Spec;

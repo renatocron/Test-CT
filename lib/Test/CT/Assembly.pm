@@ -1,6 +1,6 @@
 package Test::CT::Assembly;
 # ABSTRACT: Write tests files from *.ct.t files
-
+# VERSION 0.01
 use Moose;
 use File::Find;
 use YAML::Tiny;

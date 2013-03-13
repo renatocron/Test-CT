@@ -1,7 +1,7 @@
 Test-CT
 =======
 
-This git contains the code of Test-CT `version 0.1`.
+This git contains the code of Test-CT `version 0.12`.
 
 Test-CT is a different way to you write your tests files.
 

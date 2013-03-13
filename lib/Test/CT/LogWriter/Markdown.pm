@@ -1,5 +1,6 @@
 package Test::CT::LogWriter::Markdown;
 # ABSTRACT: Write tests results in Markdown
+# VERSION 0.01
 use Moose;
 use Data::Dumper;
 

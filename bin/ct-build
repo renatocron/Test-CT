@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 # PODNAME: ct-build
+# VERSION 0.02
+# ABSTRACT: build (and run) your tests
+
 use strict;
 use warnings;
 

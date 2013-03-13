@@ -1,6 +1,7 @@
 package Test::CT;
 # ABSTRACT: *Mix* of Test::More + Test::Reuse + Test::Routine, with *template* system.
 use strict;
+# VERSION 0.02
 our $VERSION = '0.02';
 $VERSION = eval $VERSION;    ## no critic (BuiltinFunctions::ProhibitStringyEval)
 use strict;
@@ -259,11 +260,11 @@ sub push_log {
 }
 
 sub down_log_level {
-    ...
+    print STDERR "NOT IMPLEMENTED!";
 }
 
 sub up_log_level {
-    ...
+    print STDERR "NOT IMPLEMENTED!";
 }
 
 sub finalize {
