@@ -145,9 +145,13 @@ Please see ct-build / ct-init man page to more info about it.
 
 ## CAVERATS
 
-Currently, if you use `__END__` or `__DATA__` on your tests scripts, all data bellow `__END__` will be lost. Also `__DATA__` if there!!
-If `__DATA__` exists in the test file, then `$data_content` will exists and hold the data content (O'RLY?).
+### __END__ and __DATA__
 
+Currently, if you write `__END__` or `__DATA__` in your tests scripts, all text bellow `__END__` will be lost, even `__DATA__`.
+
+Also, when `__DATA__` is present, then `$data_content` will exists and hold the data content (O'RLY?).
+
+## Hints
 
 All tests scripts outputs begin `use Test::CT` that do a `use Moose`, so it already are strict / warnings;
 
@@ -157,7 +161,6 @@ All tests scripts outputs begin `use Test::CT` that do a `use Moose`, so it alre
 * support to more log outputs (like interative HTML)
 * more than one test output. (eg: group of tests)
 * exemple of custom LogWriter for CRUD Catalyst REST API
-* __DATA__ and __END__
 * Test::CT::LogWriter::Swagger ?
 
 ## AUTHOR
