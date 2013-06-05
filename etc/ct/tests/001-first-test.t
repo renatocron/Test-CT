@@ -12,3 +12,11 @@ cmp_ok('1', '==', '1.0', '1 == 1.0');
 is_deeply({ a => 1}, { a => 2-1}, 'is_deeply ok');
 
 $tester->stash->{testes}++;
+
+
+__DATA__
+
+
+FOO '''
+
+"""  ZOOO

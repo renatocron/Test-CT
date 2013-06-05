@@ -77,11 +77,20 @@ $tester->config($test_ct_config);
 
     foreach my $test_name (@tests){
 
-        my $content = $self->_get_file_content($test_name, may_checkz => 1);
+        my ($content, $data) = $self->_get_file_content(
+            $test_name,
+            may_check  => 1,
+            remove_end => 1,
+            slurp_data => 1
+        );
         my $copy = $wrapper_str;
 
+        my $data_str_code = !$data ? '' : do {
+            $data =~ s/'/\\'/go;
+            "\nmy \$data_content = '$data';\n";
+        };
         print $fh "# $test_name \n";
-        print $fh "do { my \$ref = sub { \n".
+        print $fh "do { my \$ref = sub { $data_str_code \n".
             $content."\n\n};\n" .
             '$tester->add_test(Test::CT::TestFile->new( coderef => $ref, name => \'' . $test_name . "' ));\n};\n\n";
 
@@ -117,7 +126,21 @@ sub _get_file_content {
     $content .= $_ while <$r>;
     close $r;
     $content .= "\n" unless $content =~ /\n$/;
-    return $content;
+
+    if (exists $options{remove_end} ){
+        # WARNING: may suck some weirds tests?!
+        # may also fuck with __DATA__ after __END__
+        # but i dont care!
+        $content =~ s/^\s*__END__.+$//sm;
+    }
+
+    my ($datastr);
+    if (exists $options{slurp_data} ){
+        $content =~ s/^\s*__DATA__(.+)$//sm;
+        $datastr = $1;
+    }
+
+    return wantarray ? ($content, $datastr) : $content;
 }
 
 sub _get_wrapper_str {

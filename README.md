@@ -145,7 +145,9 @@ Please see ct-build / ct-init man page to more info about it.
 
 ## CAVERATS
 
-Currently, you can not use __END__ or __DATA__ on your tests scripts. Nor do "use strict" by yourself.
+Currently, if you use `__END__` or `__DATA__` on your tests scripts, all data bellow `__END__` will be lost. Also `__DATA__` if there!!
+If `__DATA__` exists in the test file, then `$data_content` will exists and hold the data content (O'RLY?).
+
 
 All tests scripts outputs begin `use Test::CT` that do a `use Moose`, so it already are strict / warnings;
 

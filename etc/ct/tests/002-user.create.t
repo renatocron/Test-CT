@@ -11,3 +11,9 @@ is($user->{id}, 1, 'user id is really 1');
 
 $tester->stash->{user} = $user;
 
+__END__
+
+SOME (lost) STUFF HERE!
+
+
+
