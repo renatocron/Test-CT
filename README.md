@@ -129,6 +129,11 @@ To see this in action, please execute (you need have dependencies installed as w
         Result: PASS
 
 
+After this, `etc/test_out/doc/all-tests.md` will be (re)written with tests results.
+
+You can see one example [here, docs/examples/logwritter-markdown-sample.md](https://github.com/renatoaware/Test-CT/blob/master/docs/examples/logwritter-markdown-sample.md "Markdown Sample")
+
+
 Here are the currently are dependencies, but dzil may keep cpan builds up to date:
 
 * Moose
