@@ -42,7 +42,7 @@ How it works:
     # run the tests!
     $tester->run( name => 'name you want');
 
-    $tester->run( name => 'name you want'); # this will not run test again!
+    $tester->run( name => 'name you want'); # the subref will not be called again, only if you
 
 
 Like Test::More, Test::CT gives to the following methods:
