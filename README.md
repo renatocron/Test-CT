@@ -85,7 +85,7 @@ Given this directory struct:
 To see this in action, please execute (you need have dependencies installed as well!):
 
     $ git clone git://github.com/renatoaware/Test-CT.git
-    $ cd Test-CT
+    $ cd Test-CT/test-ct/
     $ mkdir etc/test_out
     $ perl -Ilib/ bin/ct-build -dir etc/ct/ -out etc/test_out/
 
