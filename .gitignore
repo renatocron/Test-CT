@@ -11,21 +11,21 @@
 
 # ctags-exuberant tags file can be manually generated so it doesn't need to be
 # in the vcs
-tags
+test-ct/tags
 
 # Devel::Cover directory
-cover_db/
+test-ct/cover_db/
 
-blib*
-inc*
+test-ct/blib*
+test-ct/inc*
 *_local*
-META*
-MYMETA.*
-Makefile
+test-ct/META*
+test-ct/MYMETA.*
+*Makefile
 *~
 *_Inline*
 
 Test-CT-0.*
-etc/test_out/
-# this only exists in mistakes!
-t/all-tests.t
+test-ct/etc/test_out/
+# this only exists in mistake
+test-ct/t/all-tests.t
