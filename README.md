@@ -1,7 +1,7 @@
 Test-CT
 =======
 
-This git contains the code of Test-CT `version 0.12`.
+This git contains the code of Test-CT `version 0.142`.
 
 Test-CT is a different way to you write your tests files.
 
@@ -167,6 +167,7 @@ All tests scripts outputs begin `use Test::CT` that do a `use Moose`, so it alre
 * more than one test output. (eg: group of tests)
 * exemple of custom LogWriter for CRUD Catalyst REST API
 * Test::CT::LogWriter::Swagger ?
+* timings
 
 ## AUTHOR
 

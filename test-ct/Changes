@@ -1,0 +1,13 @@
+0.142 2013-06-08
+    - fix version on pause!
+
+0.14 2013-06-04
+    - Fixed bugs
+    - __END__ and __DATA__ now has a low support!
+
+0.12 2013-03-12
+    - POD Updated and remove '...' on code!
+
+0.1 2013-03-03
+    - first working version
+
