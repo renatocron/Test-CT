@@ -27,3 +27,5 @@ Makefile
 
 Test-CT-0.*
 etc/test_out/
+# this only exists in mistakes!
+t/all-tests.t
